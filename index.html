@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html style="background-color: #b6b6b6;">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Suburban Dictionary</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  </head>
+  <body style="display: flex; min-height: 100vh; flex-direction: column;">
+  <section class="section" style="flex: 1;">
+    <div class="container" id="app">
+      <!-- Image header -->
+      <div class="columns is-centered">
+        <div class="column is-three-quarters">
+          <div class="columns is-centered">
+            <div class="column is-three-quarters">
+              <img src="assets/suburban.png" id="logo">
+            </div>
+          </div>
+          <!-- Introduction -->
+          <div class="box">
+            <p>
+              Do you want to know what a made-up word means? Why not let a tortured GPT2 model trained on ~1 million UrbanDictionary definitions try for you?
+            </p>
+            <br>
+            <p class="has-text-weight-light has-text-danger	">
+              <i>
+                This system was trained on an extremely vulgar / biased dataset. Efforts were made to filter out the worst bits of training data, but the final model may still produce offensive results. Be warned!
+              </i>
+            </p>
+            <br>
+            <!-- Word input area -->
+            <div class="columns is-centered">
+              <div class="column is-half">
+                <label class="label">What do you want to define?</label>
+                <div class="field has-addons">
+                  <div class="control is-expanded" v-bind:class="{'is-loading': is_loading, 'is-danger': error_word}" v-bind:disabled="is_loading">
+                    <input class="input" type="text" placeholder="Your word" v-model="word" v-on:keyup.enter="defineWord">
+                  </div>
+                  <div class="control">
+                    <a class="button is-info" v-bind:disabled="is_loading" v-on:click="defineWord">
+                      Define
+                    </a>
+                  </div>
+                </div>
+                <template v-if="error_word">
+                  <p class="help is-danger">{{error_word}}</p>
+                </template>
+                <template v-if="model_loading_progress">
+                  <p class="help is-info">{{model_loading_message}}</p>
+                  <progress class="progress is-info" v-bind:value="model_loading_progress" max="100"></progress>
+                </template>
+              </div>
+            </div>
+          </div>
+          <!-- Word definitions -->
+          <template>
+            <div class="box" v-for="word_def in word_defs">
+              <h2 class="title" style="color: #134FE6; font-family: 'Lora', Georgia, Cambria, 'Times New Roman', Times, serif">{{word_def.word}}</h2>
+              <p>{{word_def.definition}}</p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="content has-text-centered">
+      <p>
+        A silly project by Chetan Sharma. See more silly projects at <a href="https://cactode.club/">cactode.club</a>
+      </p>
+    </div>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="js/index.js"></script>
+
+  </body>
+</html>
