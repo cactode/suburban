@@ -1,8 +1,5 @@
-// lol yes that is an API key for a burner account, pls don't abuse it i guess
 const API_URL = "https://api-inference.huggingface.co/models/cactode/gpt2_urbandict_textgen_torch";
-const HEADERS = {
-    "Authorization": "Bearer api_wtvGnGQrPMrSOKryYagJAQDjqmZdCfmBMz"
-}
+const HEADERS = {};
 
 let vm = new Vue({
     el: "#app",
@@ -15,7 +12,7 @@ let vm = new Vue({
         word_defs: []
     },
     methods: {
-        defineWord: async function() {
+        defineWord: async function () {
             // prevent extra executions
             if (this.is_loading) {
                 return;
@@ -42,22 +39,28 @@ let vm = new Vue({
             }
 
             // if model is loading, pause and show progress
-            if ('error' in data) {
+            if ('estimated_time' in data) {
                 this.model_loading_message = "Model is initializing, stand by...";
                 await this.showProgress(data.estimated_time);
                 this.model_loading_message = "Almost done...";
                 // try again, but tell the backend to only reply when it's done loading
                 data = await this.fetchWord(true);
-                this.model_loading_progress = 0;  
+                this.model_loading_progress = 0;
+            }
+
+            // free version only accepts so many requests before it craps out, check for this
+            if ('error' in data) {
+                this.is_loading = false;
+                this.error_word = "Woops, the API thinks you've submitted too many requests..."
             }
 
             // display word
             this.is_loading = false;
             let definition = data[0].generated_text;
-            this.word_defs.unshift({word: this.word, definition: definition});
+            this.word_defs.unshift({ word: this.word, definition: definition });
             this.word = "";
         },
-        fetchWord: async function(wait_for_model) {
+        fetchWord: async function (wait_for_model) {
             // define payload and params to send
             let input = "define " + this.word + ":";
             let payload = {
@@ -80,14 +83,14 @@ let vm = new Vue({
             return fetch(API_URL, params)
                 .then(response => response.json())
         },
-        showProgress: async function(estimated_time) {
+        showProgress: async function (estimated_time) {
             // slowly increment progress bar until time is up
             let start_time = performance.now();
             let elapsed_time = 0;
             do {
                 elapsed_time = ((performance.now() - start_time) / 1000);
                 this.model_loading_progress = parseInt((elapsed_time / estimated_time) * 100);
-                await new Promise(r => setTimeout(r, 100));
+                await new Promise(r => setTimeout(r, 500));
             } while (elapsed_time < estimated_time);
         }
     }
