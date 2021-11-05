@@ -34,7 +34,7 @@ let vm = new Vue({
             try {
                 data = await this.fetchWord(false);
             } catch (e) {
-                this.error_word = "Woops, backend is broken.";
+                this.error_word = "Oof, backend is offline.";
                 this.is_loading = false;
                 return;
             }
@@ -52,7 +52,9 @@ let vm = new Vue({
             // free version only accepts so many requests before it craps out, check for this
             if ('error' in data) {
                 this.is_loading = false;
-                this.error_word = "Woops, the API thinks you've submitted too many requests..."
+                this.error_word = "Oof, something broke. Maybe the API thinks you've submitted too many requests?";
+                console.log(data);
+                return;
             }
 
             // display word
