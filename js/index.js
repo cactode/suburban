@@ -1,6 +1,5 @@
 const API_URL = "https://api-inference.huggingface.co/models/cactode/gpt2_urbandict_textgen_torch";
-// api key associated with a burner account, def a bad idea but lmao gotta send it
-const HEADERS =  { Authorization: 'Bearer api_wtvGnGQrPMrSOKryYagJAQDjqmZdCfmBMz' };
+const HEADERS =  {};
 
 let vm = new Vue({
     el: "#app",
